@@ -17,8 +17,8 @@ import java.util.Map;
 @ControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlerNotFound(NotFoundException ex) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlerNotFound(EntityNotFoundException ex) {
         return ResponseEntity.status(404).body(ErrorResponse.defaultError(ex.getMessage()));
     }
 
@@ -35,7 +35,6 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            errors.put("status", "400");
             errors.put("message", error.getDefaultMessage());
         });
         return ResponseEntity.badRequest().body(errors);

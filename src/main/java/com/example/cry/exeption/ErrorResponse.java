@@ -10,10 +10,6 @@ public class ErrorResponse {
 
     private String message;
 
-    public ErrorResponse badRequest(String errorMessage) {
-        return new ErrorResponse(errorMessage);
-    }
-
     public static ErrorResponse defaultError(String errorMessage) {
         return new ErrorResponse(errorMessage);
     }

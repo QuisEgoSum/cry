@@ -25,7 +25,7 @@ public class UserRepository {
         return mongoTemplate.save(user);
     }
 
-    public Optional<UserModel> updateUser(String userId, UserUpdateDTO user) {
+    public Optional<UserModel> updateUser(String userId, UserDTO.UpdateDTO user) {
 
         Query query = new Query(Criteria.where("_id").is(userId));
         Update update = new Update();
