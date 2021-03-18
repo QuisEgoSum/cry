@@ -1,10 +1,7 @@
 package com.example.cry.user;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -35,6 +32,7 @@ public class UserDTO {
         private String username;
 
         @Size(min = 6, max = 63)
+        @Setter
         private String password;
     }
 
@@ -52,6 +50,7 @@ public class UserDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     static public class SigninReponse {
 
         private String jwt;
