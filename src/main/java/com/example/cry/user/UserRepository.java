@@ -42,4 +42,8 @@ public class UserRepository {
 
         return Optional.ofNullable(mongoTemplate.findAndModify(query, update, options, UserModel.class));
     }
+
+    public Optional<UserModel> findByUsername(String username) {
+        return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("username").is(username)), UserModel.class));
+    }
 }

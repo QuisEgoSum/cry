@@ -15,9 +15,12 @@ public class UserPrincipal implements UserDetails {
 
     private String username;
 
+    private String password;
+
     public UserPrincipal(UserModel user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.password = user.getPassword();
     }
 
     @Override
@@ -27,7 +30,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
