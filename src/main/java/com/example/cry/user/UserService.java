@@ -59,6 +59,7 @@ public class UserService {
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
-        return new UserDTO.SigninReponse(jwt, principal);
+        UserDTO.SigninReponse kek = new UserDTO.SigninReponse(jwt, principal);
+        return kek;
     }
 }
