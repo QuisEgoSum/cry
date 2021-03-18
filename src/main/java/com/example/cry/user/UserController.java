@@ -3,6 +3,7 @@ package com.example.cry.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,5 +33,10 @@ public class UserController {
     @PostMapping("/signin")
     public ResponseEntity signin(@Valid @RequestBody UserDTO.Signin credentials) {
         return ResponseEntity.ok(userService.signin(credentials));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity findUserInfoMe(@AuthenticationPrincipal UserPrincipal user) {
+        return ResponseEntity.ok(userService.findUserById(user.getId()));
     }
 }
