@@ -26,6 +26,8 @@ public class UserModel {
     @JsonIgnore
     private String password;
 
+    private UserRoles role = UserRoles.USER;
+
     public UserModel(UserDTO.CreateDTO user) {
         this.username = user.getUsername();
         this.password = user.getPassword();

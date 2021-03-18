@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 
@@ -16,6 +17,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/user/{userId}")
+    @RolesAllowed({"USER"})
     public ResponseEntity findUserById(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(userService.findUserById(userId));
     }
