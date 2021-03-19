@@ -52,10 +52,10 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserById(user.getId()));
     }
 
-//    @PatchMapping("/user")
-//    public ResponseEntity updateUser(@Valid @RequestBody UserDTO.UpdateUser user, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-//        return ResponseEntity.ok(userService.updateUser(userPrincipal.getId(), user));
-//    }
+    @PatchMapping("/user")
+    public ResponseEntity updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody UserDTO.UpdateUser user) {
+        return ResponseEntity.ok(userService.updateUser(userPrincipal.getId(), user));
+    }
 
     @GetMapping("/users")
     public ResponseEntity findUsers() {

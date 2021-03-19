@@ -48,6 +48,16 @@ public class UserService {
         }
     }
 
+    public UserModel updateUser(String userId, UserDTO.UpdateUser user) throws BadRequestException {
+        try {
+            if (user.getPassword() != null)
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return userRepository.updateUser(userId, user).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        } catch (DuplicateKeyException ex) {
+            throw new BadRequestException("User with this email address already exists");
+        }
+    }
+
     public UserDTO.SigninReponse signin(UserDTO.Signin credentials) {
 
         Authentication authentication = authenticationManager.authenticate(

@@ -40,6 +40,21 @@ public class UserDTO {
         private UserRoles role = UserRoles.USER;
     }
 
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static public class UpdateUser {
+
+        @Size(min = 1, max = 31)
+        private String username;
+
+        @Size(min = 6, max = 63)
+        @Setter
+        private String password;
+    }
+
+
     @Getter
     @AllArgsConstructor
     static public class Signin {
@@ -63,10 +78,13 @@ public class UserDTO {
 
         private String username;
 
+        private UserRoles role;
+
         public SigninReponse(String jwt, UserPrincipal user) {
             this.jwt = jwt;
             this.id = user.getId();
             this.username = user.getUsername();
+            this.role = user.getRole();
         }
     }
 }

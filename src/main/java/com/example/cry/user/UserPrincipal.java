@@ -21,11 +21,15 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
+    @Getter
+    private UserRoles role;
+
     public UserPrincipal(UserModel user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        this.role = user.getRole();
     }
 
     @Override

@@ -28,11 +28,7 @@ public class UserRepository {
 
     public Optional<UserModel> updateUser(String userId, UserDTO.UpdateAdmin user) {
 
-        Query query = new Query(Criteria.where("_id").is(userId));
         Update update = new Update();
-        FindAndModifyOptions options = new FindAndModifyOptions();
-
-        options.returnNew(true);
 
         if (user.getUsername() != null)
             update.set("username", user.getUsername());
@@ -41,8 +37,30 @@ public class UserRepository {
         if (user.getRole() != null)
             update.set("role", user.getRole());
 
-        return Optional.ofNullable(mongoTemplate.findAndModify(query, update, options, UserModel.class));
+        return Optional.ofNullable(mongoTemplate.findAndModify(
+                new Query(Criteria.where("_id").is(userId)),
+                update,
+                new FindAndModifyOptions().returnNew(true),
+                UserModel.class));
     }
+
+    public Optional<UserModel> updateUser(String userId, UserDTO.UpdateUser user) {
+
+        Update update = new Update();
+        FindAndModifyOptions options = new FindAndModifyOptions();
+
+        if (user.getUsername() != null)
+            update.set("username", user.getUsername());
+        if (user.getPassword() != null)
+            update.set("password", user.getPassword());
+
+        return Optional.ofNullable(mongoTemplate.findAndModify(
+                new Query(Criteria.where("_id").is(userId)),
+                update,
+                new FindAndModifyOptions().returnNew(true),
+                UserModel.class));
+    }
+
 
     public Optional<UserModel> findByUsername(String username) {
         return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("username").is(username)), UserModel.class));
@@ -53,7 +71,7 @@ public class UserRepository {
     }
 
     public Optional<UserModel> userExistNoAdmin(String userId) {
-        Query query = new Query(Criteria.where("_id").is(userId).and("role").ne("ADMIN"));
+        Query query = new Query(Criteria.where("_id").is(userId).and("role").ne(UserRoles.ADMIN.name()));
         query.fields().include("_id");
         return Optional.ofNullable(mongoTemplate.findOne(query, UserModel.class));
     }

@@ -1,0 +1,345 @@
+openapi: 3.0.1
+info:
+  title: Cry
+  description: description
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        status:
+          type: number
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        role:
+          $ref: '#components/schemas/UserRoles'
+    UserRoles:
+      type: string
+      enum: ['ADMIN', 'USER']
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        belongsTo:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+        amountOfWhining:
+          type: number
+        open:
+          type: boolean
+        whiners:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              username:
+                type: string
+        closedBy:
+          type: object
+          properties:
+            id:
+              type: string
+            username:
+              type: string
+        
+paths:
+  /signin:
+    post:
+      summary: signin
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  role:
+                    type: string
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+  /user:
+    get:
+      summary: get user info
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+    patch:
+      summary: update user
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+  /admin/user:
+    post:
+      summary: create user
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  $ref: '#components/schemas/UserRoles'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+  /admin/user/{userId}:
+    get:
+      summary: Get user info for admin
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+    patch:
+      summary: Update user for admin
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  $ref: '#components/schemas/UserRoles'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+  /users:
+    get:
+      summary: Get users
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/UserInfo'
+  /admin/users:
+    get:
+      summary: Get users
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: role
+          schema:
+            $ref: '#components/schemas/UserRoles'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/UserInfo'
+  /user/{userId}/subscribe:
+    put:
+      summary: Subscribe to a user
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Return user info(my user info)
+  /issue:
+    post:
+      summary: Create issue
+      security:
+        - bearerAuth: []
+      tags:
+        - Issue
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        201:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Issue'
+  /issue/{issueId}/whine:
+    patch:
+      summary: Whine about the problem
+      security:
+        - bearerAuth: []
+      tags:
+        - Issue
+      parameters:
+        - in: path
+          name: issueId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Issue'
+  /issue/{issueId}/close:
+    patch:
+      summary: Close issue
+      security:
+        - bearerAuth: []
+      tags:
+        - Issue
+      parameters:
+        - in: path
+          name: issueId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Issue'
