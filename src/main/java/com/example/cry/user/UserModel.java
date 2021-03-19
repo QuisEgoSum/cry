@@ -32,9 +32,9 @@ public class UserModel {
 
     private UserRoles role = UserRoles.ADMIN;
 
-    private Set<String> subscribers;
+    private Set<String> subscriptions;
 
-    public UserModel(UserDTO.CreateDTO user) {
+    public UserModel(UserDTO.CreateAdmin user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
     }

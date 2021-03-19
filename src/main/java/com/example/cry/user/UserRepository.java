@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,7 +26,7 @@ public class UserRepository {
         return mongoTemplate.save(user);
     }
 
-    public Optional<UserModel> updateUser(String userId, UserDTO.UpdateDTO user) {
+    public Optional<UserModel> updateUser(String userId, UserDTO.UpdateAdmin user) {
 
         Query query = new Query(Criteria.where("_id").is(userId));
         Update update = new Update();
@@ -33,17 +34,36 @@ public class UserRepository {
 
         options.returnNew(true);
 
-        if (user.getUsername() != null) {
+        if (user.getUsername() != null)
             update.set("username", user.getUsername());
-        }
-        if (user.getPassword() != null) {
+        if (user.getPassword() != null)
             update.set("password", user.getPassword());
-        }
+        if (user.getRole() != null)
+            update.set("role", user.getRole());
 
         return Optional.ofNullable(mongoTemplate.findAndModify(query, update, options, UserModel.class));
     }
 
     public Optional<UserModel> findByUsername(String username) {
         return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("username").is(username)), UserModel.class));
+    }
+
+    public List<UserModel> findUsers(UserRoles role) {
+        return mongoTemplate.find(new Query(Criteria.where("role").is(role.name())), UserModel.class);
+    }
+
+    public Optional<UserModel> userExistNoAdmin(String userId) {
+        Query query = new Query(Criteria.where("_id").is(userId).and("role").ne("ADMIN"));
+        query.fields().include("_id");
+        return Optional.ofNullable(mongoTemplate.findOne(query, UserModel.class));
+    }
+
+    public Optional<UserModel> subscribeUser(String userId, String targetUserId) {
+        return Optional.ofNullable(mongoTemplate.findAndModify(
+                new Query(Criteria.where("_id").is(userId)),
+                new Update().addToSet("subscriptions").value(targetUserId),
+                new FindAndModifyOptions().returnNew(true),
+                UserModel.class
+        ));
     }
 }

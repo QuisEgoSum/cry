@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
+import java.text.MessageFormat;
+import java.util.List;
 
 
 @RestController
@@ -16,21 +18,21 @@ public class UserController {
 
     private UserService userService;
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/admin/user/{userId}")
     @RolesAllowed({"ROLE_ADMIN"})
     public ResponseEntity findUserById(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(userService.findUserById(userId));
     }
 
-    @PostMapping("/user")
+    @PostMapping("/admin/user")
     @RolesAllowed({"ROLE_ADMIN"})
-    public ResponseEntity signup(@Valid @RequestBody UserDTO.CreateDTO user) {
+    public ResponseEntity signup(@Valid @RequestBody UserDTO.CreateAdmin user) {
         return ResponseEntity.status(201).body(userService.createUser(user));
     }
 
-    @PatchMapping("/user/{userId}")
+    @PatchMapping("/admin/user/{userId}")
     @RolesAllowed({"ROLE_ADMIN"})
-    public ResponseEntity updateUser(@PathVariable("userId") String userId, @Valid @RequestBody UserDTO.UpdateDTO user) {
+    public ResponseEntity updateUser(@PathVariable("userId") String userId, @Valid @RequestBody UserDTO.UpdateAdmin user) {
         return ResponseEntity.ok(userService.updateUser(userId, user));
     }
 
@@ -39,13 +41,29 @@ public class UserController {
         return ResponseEntity.ok(userService.signin(credentials));
     }
 
+    @GetMapping("/admin/users")
+    @RolesAllowed({"ROLE_ADMIN"})
+    public ResponseEntity<List<UserModel>> findUsersAdmin(@RequestParam(defaultValue = "USER") UserRoles role) {
+        return ResponseEntity.ok(userService.findUsers(role));
+    }
+
     @GetMapping("/user")
     public ResponseEntity findUserInfoMe(@AuthenticationPrincipal UserPrincipal user) {
         return ResponseEntity.ok(userService.findUserById(user.getId()));
     }
 
-    @PatchMapping("/user")
-    public ResponseEntity updateUser(@Valid @RequestBody UserDTO.UpdateDTO user, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return ResponseEntity.ok(userService.updateUser(userPrincipal.getId(), user));
+//    @PatchMapping("/user")
+//    public ResponseEntity updateUser(@Valid @RequestBody UserDTO.UpdateUser user, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+//        return ResponseEntity.ok(userService.updateUser(userPrincipal.getId(), user));
+//    }
+
+    @GetMapping("/users")
+    public ResponseEntity findUsers() {
+        return ResponseEntity.ok(userService.findUsers(UserRoles.USER));
+    }
+
+    @PutMapping("/user/{targetUserId}/subscribe")
+    public ResponseEntity subscribeUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable("targetUserId") String targetUserId) {
+        return ResponseEntity.ok(userService.subscribeUser(userPrincipal.getId(), targetUserId));
     }
 }

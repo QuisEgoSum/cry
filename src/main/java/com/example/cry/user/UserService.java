@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    public UserModel createUser(UserDTO.CreateDTO user) throws BadRequestException {
+    public UserModel createUser(UserDTO.CreateAdmin user) throws BadRequestException {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.saveUser(new UserModel(user));
@@ -36,7 +38,7 @@ public class UserService {
         }
     }
 
-    public UserModel updateUser(String userId, UserDTO.UpdateDTO user) throws BadRequestException {
+    public UserModel updateUser(String userId, UserDTO.UpdateAdmin user) throws BadRequestException {
         try {
             if (user.getPassword() != null)
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -62,5 +64,18 @@ public class UserService {
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
         return new UserDTO.SigninReponse(jwt, principal);
+    }
+
+    public List<UserModel> findUsers(UserRoles role) {
+        return userRepository.findUsers(role);
+    }
+
+    public UserModel subscribeUser(String userId, String targetUserId) {
+
+        userRepository.userExistNoAdmin(targetUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return userRepository.subscribeUser(userId, targetUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 }

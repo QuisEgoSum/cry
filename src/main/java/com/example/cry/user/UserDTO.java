@@ -11,7 +11,7 @@ public class UserDTO {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    static public class CreateDTO {
+    static public class CreateAdmin {
 
         @NotBlank
         @Size(min = 1, max = 31)
@@ -21,12 +21,14 @@ public class UserDTO {
         @Size(min = 6, max = 63)
         @Setter
         private String password;
+
+        private UserRoles role = UserRoles.USER;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    static public class UpdateDTO {
+    static public class UpdateAdmin {
 
         @Size(min = 1, max = 31)
         private String username;
@@ -34,6 +36,8 @@ public class UserDTO {
         @Size(min = 6, max = 63)
         @Setter
         private String password;
+
+        private UserRoles role = UserRoles.USER;
     }
 
     @Getter
