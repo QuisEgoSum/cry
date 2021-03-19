@@ -19,18 +19,18 @@ public class UserPrincipal implements UserDetails {
 
     private String password;
 
-    private Collection<? extends GrantedAuthority> role;
+    private Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(UserModel user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.role = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+        this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.role;
+        return this.authorities;
     }
 
     @Override

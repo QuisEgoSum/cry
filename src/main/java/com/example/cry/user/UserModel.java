@@ -1,6 +1,7 @@
 package com.example.cry.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Set;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Document("users")
 public class UserModel {
 
@@ -26,7 +30,9 @@ public class UserModel {
     @JsonIgnore
     private String password;
 
-    private UserRoles role = UserRoles.USER;
+    private UserRoles role = UserRoles.ADMIN;
+
+    private Set<String> subscribers;
 
     public UserModel(UserDTO.CreateDTO user) {
         this.username = user.getUsername();

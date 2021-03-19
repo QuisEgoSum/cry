@@ -17,17 +17,19 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/user/{userId}")
-    @RolesAllowed({"USER"})
+    @RolesAllowed({"ROLE_ADMIN"})
     public ResponseEntity findUserById(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(userService.findUserById(userId));
     }
 
     @PostMapping("/user")
+    @RolesAllowed({"ROLE_ADMIN"})
     public ResponseEntity signup(@Valid @RequestBody UserDTO.CreateDTO user) {
         return ResponseEntity.status(201).body(userService.createUser(user));
     }
 
     @PatchMapping("/user/{userId}")
+    @RolesAllowed({"ROLE_ADMIN"})
     public ResponseEntity updateUser(@PathVariable("userId") String userId, @Valid @RequestBody UserDTO.UpdateDTO user) {
         return ResponseEntity.ok(userService.updateUser(userId, user));
     }
@@ -40,5 +42,10 @@ public class UserController {
     @GetMapping("/user")
     public ResponseEntity findUserInfoMe(@AuthenticationPrincipal UserPrincipal user) {
         return ResponseEntity.ok(userService.findUserById(user.getId()));
+    }
+
+    @PatchMapping("/user")
+    public ResponseEntity updateUser(@Valid @RequestBody UserDTO.UpdateDTO user, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(userService.updateUser(userPrincipal.getId(), user));
     }
 }
