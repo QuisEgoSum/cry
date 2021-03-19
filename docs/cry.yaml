@@ -65,15 +65,7 @@ components:
               id:
                 type: string
               username:
-                type: string
-        closedBy:
-          type: object
-          properties:
-            id:
-              type: string
-            username:
-              type: string
-        
+                type: string  
 paths:
   /signin:
     post:

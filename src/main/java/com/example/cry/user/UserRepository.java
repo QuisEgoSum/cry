@@ -47,7 +47,6 @@ public class UserRepository {
     public Optional<UserModel> updateUser(String userId, UserDTO.UpdateUser user) {
 
         Update update = new Update();
-        FindAndModifyOptions options = new FindAndModifyOptions();
 
         if (user.getUsername() != null)
             update.set("username", user.getUsername());

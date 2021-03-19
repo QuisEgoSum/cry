@@ -5,6 +5,8 @@ import com.example.cry.exeption.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 @AllArgsConstructor
@@ -23,6 +25,10 @@ public class IssueService {
 
     public IssueModel closeIssue(String issueId, String userId) {
         return issueRepository.closeIssue(issueId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("There is no such issue"));
+                .orElseThrow(() -> new EntityNotFoundException("There is no such problem or it does not belong to you"));
+    }
+
+    public List<IssueDTO.IssuePopulate> findUserIssues(String userId) {
+        return issueRepository.findUserIssues(userId);
     }
 }

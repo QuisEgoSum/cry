@@ -29,4 +29,9 @@ public class IssueController {
     public ResponseEntity closeIssue(@PathVariable("issueId") String issueId, @AuthenticationPrincipal UserPrincipal user) {
         return ResponseEntity.ok(issueService.closeIssue(issueId, user.getId()));
     }
+
+    @GetMapping("/issue/user/{userId}")
+    public ResponseEntity getUserIssues(@PathVariable("userId") String userId) {
+        return ResponseEntity.ok(issueService.findUserIssues(userId));
+    }
 }

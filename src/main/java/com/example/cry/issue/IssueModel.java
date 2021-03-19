@@ -2,14 +2,15 @@ package com.example.cry.issue;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -28,7 +29,7 @@ public class IssueModel {
     @Setter
     private String description;
 
-    private String belongsTo;
+    private ObjectId belongsTo;
 
     @Setter
     private Integer amountOfWhining = 0;
@@ -36,13 +37,19 @@ public class IssueModel {
     @Setter
     private Boolean open = true;
 
-    private Set<String> whiners;
+    private ArrayList<ObjectId> whiners = new ArrayList<>();
 
-    private String closedBy;
+    public List<String> getWhiners() {
+        return this.whiners.stream().map(ObjectId::toString).collect(Collectors.toList());
+    }
+
+    public String getBelongsTo() {
+        return this.belongsTo.toString();
+    }
 
     public IssueModel(IssueDTO.Create issue, String belongsTo) {
         this.title = issue.getTitle();
         this.description = issue.getDescription();
-        this.belongsTo = belongsTo;
+        this.belongsTo = new ObjectId(belongsTo);
     }
 }
