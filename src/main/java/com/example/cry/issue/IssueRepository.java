@@ -11,8 +11,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
@@ -55,33 +58,6 @@ public class IssueRepository {
     public List<IssueDTO.IssuePopulate> findUserIssues(String userId) {
         /**
          * db.getCollection('issues').aggregate([
-         * {$match: {"open": false}},
-         * {$project: {_id: 1, title: 1, description: 1, amountOfWhining: 1, open: 1, "belongsTo": {$toObjectId: "$belongsTo"}, whiners: {$toObjectId: "$belongsTo"}}},
-         * {$lookup: {
-         *         from: 'users',
-         *         localField: 'belongsTo',
-         *         as: 'belongsTo',
-         *         foreignField: '_id'
-         *     }
-         * },
-         * {$unwind: '$belongsTo'},
-         * {$lookup: {
-         *         from: 'users',
-         *         localField: 'whiners',
-         *         as: 'whiners',
-         *         foreignField: '_id'
-         *     }
-         * },
-         * {$project: {
-         *         'belongsTo._id': 1,
-         *         'belongsTo.username': 1,
-         *         'whiners._id': 1,
-         *         'whiners.username': 1,
-         *         _id: 1, title: 1, description: 1, amountOfWhining: 1, open: 1
-         *     }}
-         * ])
-         *
-         * db.getCollection('issues').aggregate([
          *     {$match: {"belongsTo": ObjectId('60544afaf218421c1b69ac1d')}},
          *     {$lookup: {
          *             from: 'users',
@@ -106,8 +82,21 @@ public class IssueRepository {
                             match(Criteria.where("belongsTo").is(new ObjectId(userId))),
                             lookup("users", "belongsTo", "_id", "belongsTo"),
                             unwind("belongsTo"),
-                            lookup("users", "whiners", "_id", "whiners"),
-                            project("id", "title", "description", "belongsTo", "amountOfWhining", "whiners", "open")
+                            lookup("users", "whiners", "_id", "whiners")
+                        ),
+                        IssueModel.class,
+                        IssueDTO.IssuePopulate.class
+                ).getMappedResults();
+    }
+
+    public List<IssueDTO.IssuePopulate> findUsersIssues(List<ObjectId> userIds) {
+        return mongoTemplate
+                .aggregate(
+                        newAggregation(
+                                match(Criteria.where("belongsTo").in(userIds)),
+                                lookup("users", "belongsTo", "_id", "belongsTo"),
+                                unwind("belongsTo"),
+                                lookup("users", "whiners", "_id", "whiners")
                         ),
                         IssueModel.class,
                         IssueDTO.IssuePopulate.class

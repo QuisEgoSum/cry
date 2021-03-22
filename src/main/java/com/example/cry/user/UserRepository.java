@@ -2,6 +2,7 @@ package com.example.cry.user;
 
 
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -66,7 +67,12 @@ public class UserRepository {
     }
 
     public List<UserModel> findUsers(UserRoles role) {
-        return mongoTemplate.find(new Query(Criteria.where("role").is(role.name())), UserModel.class);
+
+        Query query = new Query(Criteria.where("role").is(role.name()));
+
+        query.fields().exclude("subscriptions");
+
+        return mongoTemplate.find(query, UserModel.class);
     }
 
     public Optional<UserModel> userExistNoAdmin(String userId) {
@@ -78,7 +84,16 @@ public class UserRepository {
     public Optional<UserModel> subscribeUser(String userId, String targetUserId) {
         return Optional.ofNullable(mongoTemplate.findAndModify(
                 new Query(Criteria.where("_id").is(userId)),
-                new Update().addToSet("subscriptions").value(targetUserId),
+                new Update().addToSet("subscriptions").value(new ObjectId(targetUserId)),
+                new FindAndModifyOptions().returnNew(true),
+                UserModel.class
+        ));
+    }
+
+    public Optional<UserModel> unsubscribeUser(String userId, String targetUserId) {
+        return  Optional.ofNullable(mongoTemplate.findAndModify(
+                new Query(Criteria.where("_id").is(userId)),
+                new Update().pull("subscriptions", new ObjectId(targetUserId)),
                 new FindAndModifyOptions().returnNew(true),
                 UserModel.class
         ));

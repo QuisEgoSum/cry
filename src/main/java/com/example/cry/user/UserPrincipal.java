@@ -2,12 +2,12 @@ package com.example.cry.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bson.types.ObjectId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
@@ -22,6 +22,9 @@ public class UserPrincipal implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     @Getter
+    private List<ObjectId> subscriptions;
+
+    @Getter
     private UserRoles role;
 
     public UserPrincipal(UserModel user) {
@@ -30,6 +33,7 @@ public class UserPrincipal implements UserDetails {
         this.password = user.getPassword();
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         this.role = user.getRole();
+        this.subscriptions = user.getSubscriptionsObjectId();
     }
 
     @Override

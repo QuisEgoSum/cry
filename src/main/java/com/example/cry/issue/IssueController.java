@@ -34,4 +34,9 @@ public class IssueController {
     public ResponseEntity getUserIssues(@PathVariable("userId") String userId) {
         return ResponseEntity.ok(issueService.findUserIssues(userId));
     }
+
+    @GetMapping("/")
+    public ResponseEntity getIssues(@AuthenticationPrincipal UserPrincipal user) {
+        return ResponseEntity.ok(issueService.findIssues(user.getSubscriptions()));
+    }
 }

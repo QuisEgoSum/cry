@@ -88,4 +88,9 @@ public class UserService {
         return userRepository.subscribeUser(userId, targetUserId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
+
+    public UserModel unsubscribeUser(String userId, String targetUserId) {
+        return userRepository.unsubscribeUser(userId, targetUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
 }

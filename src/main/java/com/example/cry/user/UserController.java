@@ -66,4 +66,9 @@ public class UserController {
     public ResponseEntity subscribeUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable("targetUserId") String targetUserId) {
         return ResponseEntity.ok(userService.subscribeUser(userPrincipal.getId(), targetUserId));
     }
+
+    @PutMapping("/user/{targetUserId}/unsubscribe")
+    public ResponseEntity unsubscribeUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable("targetUserId") String targetUserId) {
+        return ResponseEntity.ok(userService.unsubscribeUser(userPrincipal.getId(), targetUserId));
+    }
 }
