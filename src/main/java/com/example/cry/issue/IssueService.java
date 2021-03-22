@@ -29,6 +29,7 @@ public class IssueService {
     }
 
     public List<IssueDTO.IssuePopulate> findUserIssues(String userId) {
-        return issueRepository.findUserIssues(userId);
+        List<IssueDTO.IssuePopulate> issues = issueRepository.findUserIssues(userId);
+        return issues;
     }
 }

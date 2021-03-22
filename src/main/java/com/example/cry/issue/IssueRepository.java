@@ -1,6 +1,8 @@
 package com.example.cry.issue;
 
 import lombok.AllArgsConstructor;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,7 +34,7 @@ public class IssueRepository {
                                 .and("open").is(true)
                 ),
                 new Update()
-                        .addToSet("whiners", whinerId)
+                        .addToSet("whiners", new ObjectId(whinerId))
                         .inc("amountOfWhining", 1),
                 new FindAndModifyOptions()
                         .returnNew(true),
@@ -101,10 +103,11 @@ public class IssueRepository {
         return mongoTemplate
                 .aggregate(
                         newAggregation(
-                            match(new Criteria().where("belongsTo").is(userId)),
+                            match(Criteria.where("belongsTo").is(new ObjectId(userId))),
                             lookup("users", "belongsTo", "_id", "belongsTo"),
                             unwind("belongsTo"),
-                            lookup("users", "whiners", "_id", "whiners")
+                            lookup("users", "whiners", "_id", "whiners"),
+                            project("id", "title", "description", "belongsTo", "amountOfWhining", "whiners", "open")
                         ),
                         IssueModel.class,
                         IssueDTO.IssuePopulate.class

@@ -44,6 +44,7 @@ public class IssueDTO {
     }
 
     @Data
+    @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     static public class IssuePopulate {
@@ -63,6 +64,7 @@ public class IssueDTO {
         private List<UserInfo> whiners;
 
         @Data
+        @Getter
         @AllArgsConstructor
         @NoArgsConstructor
         static public class UserInfo {
