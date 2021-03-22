@@ -271,6 +271,30 @@ paths:
       responses:
         200:
           description: Return user info(my user info)
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
+  /user/{userId}/unsubscribe:
+    put:
+      summary: Unsubscribe user
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Return user info(my user info)
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/UserInfo'
   /issue:
     post:
       summary: Create issue
@@ -335,3 +359,42 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Issue'
+  /issue/user/{userId}:
+    get:
+      summary: Get issues by user
+      security:
+        - bearerAuth: []
+      tags:
+        - Issue
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Issue'
+  /:
+    get:
+      summary: Get issues
+      security:
+        - bearerAuth: []
+      tags:
+        - Core
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Issue'
+
